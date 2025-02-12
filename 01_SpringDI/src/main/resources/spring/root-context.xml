@@ -3,4 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <!-- 다른 설정 파일을 가져오기 위해서 사용되는 요소(태그) -->
+    <import resource="owner-context.xml"/>
+    <import resource="pet-context.xml"/>
+
 </beans>

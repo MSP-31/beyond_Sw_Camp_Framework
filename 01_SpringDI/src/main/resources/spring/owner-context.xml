@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--
+Owner hong = new Owner();
+
+hong.setName("홍길동");
+hong.setAge(24);
+hong.setPet(dog);
+-->
+
+    <!-- ref= "빈 참조" -->
+    <!--
+    <bean id="hong" class="com.beyond.di.owner.Owner">
+        <property name="name" value="홍길동"/>
+        <property name="age" value="24"/>
+        <property name="pet" ref="dog"/>
+    </bean>
+    -->
+    <bean id="hong" class="com.beyond.di.owner.Owner" primary="true"
+          p:name="홍길동" p:age="24" p:pet-ref="dog"/>
+
+    <!--
+    Owner lee = new Owner("이몽룡", 28, cat);
+    -->
+    <!--
+    생성자로 값 전달
+    <bean id="lee" class="com.beyond.di.owner.Owner">
+        <constructor-arg name="name" value="이몽룡"/>
+        <constructor-arg index="1" value="28"/>
+        <constructor-arg name="pet" ref="cat"/>
+    </bean>
+    -->
+    <bean id="lee" class="com.beyond.di.owner.Owner"
+          c:name="이몽룡" c:_1="28" c:_2-ref="cat"/>
+
+</beans>
