@@ -38,7 +38,7 @@ class OwnerTest {
     @Test
     @DisplayName("Owner 객체 생성 테스트")
     void create(){
-        // 기존에 자바 애플리케이션에서는 다형성을 통해서 객체 간의 결합도를 느슨하게 만들어준다.
+        // 기존에 자바 애플리케이션에서는 다형성을 통해서 객체 간의 결합도를 느슨하게 만들었다.
         // 생성자를 통한 의존성 주입
         // Owner owner = new Owner("홍길동", 24, new Dog("멍멍이"));
         // Owner owner = new Owner("홍길동", 24, new Cat("야옹이"));
