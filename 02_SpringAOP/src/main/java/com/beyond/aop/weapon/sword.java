@@ -1,5 +1,6 @@
 package com.beyond.aop.weapon;
 
+import com.beyond.aop.annotation.NoLogging;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +11,7 @@ public class sword extends Weapon {
     }
 
     @Override
+    @NoLogging
     public String attack() {
         return "검을 휘두른다.";
     }

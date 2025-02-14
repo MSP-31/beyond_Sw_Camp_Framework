@@ -17,11 +17,14 @@ public class Character {
     private int level;
 
     @Autowired
-    @Qualifier("sword")
+    @Qualifier("windForce")
     private Weapon weapon;
 
-    public void quest(String questName){
-
-        System.out.printf("%s 퀘스트를 진행중...\n",questName);
+    public String quest(String questName){
+        // if(true){
+        //     throw new RuntimeException("Quest 수행 중 예외 발생");
+        // }
+        // System.out.printf("%s 퀘스트를 진행중...\n",questName);
+        return questName + " 퀘스트를 진행 중..";
     }
 }
