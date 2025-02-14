@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+
+    <!--
+    ContextLoaderListener 에서 루트 애플리케이션 컨텍스트를 생성하기 위한 설정 파일의 경로를 지정한다.
+    -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>WEB-INF/spring/root-context.xml</param-value>
+    </context-param>
+
+    <!--
+    ContextLoaderListener
+      - 웹 애플리케이션의 시작, 종료에 대한 이벤트 리스너이다.
+        (ServletContextListener 를 구현한 리스너 클래스이다.
+      - 웹 애플리케이션 구동 시 루트 애플리케이션 컨텍스트를 생성한다.
+      - 웹 애플리케이션 종료 시 루트 애플리케이션 컨텍스트가 소멸한다.
+    -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!--
+    DispatcherServlet
+      - 사용자의 요청을 받는 프론트 컨트롤러 서블릿이다.
+      - DispatcherServlet 서블릿마다 독립적인 웹 애플리케이션 컨텍스트를 갖는다.
+    -->
+    <servlet>
+        <servlet-name>appServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!--
+        DispatcherServlet 서블렛마다 독립적인 웹 어플리케이션 컨텍스트를
+        생성하기 위한 설정 파일의 경로를 지정한다.
+        -->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+        </init-param>
+        <!--
+        웹 애플리케이션이 시작될 때 한 개의 DispatcherServlet 을 미리 생성하고 시작한다.
+        -->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>appServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+    
+</web-app>
