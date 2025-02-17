@@ -175,7 +175,7 @@ public class UserController {
     //    - key는 반드시 문자열 사용
     //    - value String, Number, Boolean, Array ,Object, null 저장 가능
     //  - 대부분의 프로그래밍 언어에서 JSO 데이터를 핸들링 할 수있는 라이브러리를 제공하고 있다.
-    //  - (시스템 간 객체 교환이 용이
+    //  - (시스템 간 객체 교환이 용이)
 
     // * jackson 라이브러리
     //  - 자바 객체를 Json 형태의 데이터로 변환하기 위한 라이브러리이다.
