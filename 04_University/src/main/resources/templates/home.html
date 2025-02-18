@@ -1,11 +1,24 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org/">
+<html th:replace="~{layout/baseLayout :: baseLayout(~{::title}, ~{::main} )}" lang="ko" xmlns:th="http://www.thymeleaf.org/">
 <head>
     <meta charset="UTF-8">
     <title>스프링 부트 웹</title>
 </head>
 <body>
-    <h2>스프링 부트 웹</h2>
-    <h3 th:text="${ message }"></h3>
+<!--    <header th:replace="~{layout/fragments/common :: header}"></header>-->
+    <header th:insert="~{layout/fragments/common :: header}"></header>
+    <main>
+        <h3>1. 학생 조회</h3>
+        <a th:href="@{/student/search}">View Details</a>
+        <!--
+        <h3 th:if="${message != null}" th:text="${ message }"></h3>
+        <input type="text" th:if="${ message != null }" th:value="${ message }">
+
+        <ul>
+            <li th:each="name: ${names} " th:text="${name}"></li>
+        </ul>
+        -->
+    </main>
+
 </body>
 </html>
