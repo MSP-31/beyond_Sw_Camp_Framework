@@ -3,6 +3,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.beyond.university.student.model.mapper.StudentMapper">
+    <!--
+    중복되는 쿼리 내용을 재사용하기 위한 SQL 조각이다.
+    -->
+    <sql id="selectStudentSql">
+        SELECT student_no,
+               department_no,
+               student_name,
+               student_ssn,
+               student_address,
+               entrance_date,
+               absence_yn,
+               coach_professor_no
+        FROM tb_student
+    </sql>
+
     <resultMap id="studentResultMap" type="Student">
         <id property="no" column="student_no"/>
         <result property="deptNo" column="department_no"/>
@@ -19,15 +34,64 @@
     외부에서 전달받는 파라미터가 있으면 해당하는 파라미터의 타입을 지정해야 한다. (parameterType 속성)
     -->
     <select id="selectAllByDeptNo" parameterType="string" resultMap="studentResultMap">
-        SELECT student_no,
-               department_no,
-               student_name,
-               student_ssn,
-               student_address,
-               entrance_date,
-               absence_yn,
-               coach_professor_no
-        FROM tb_student
+        <include refid="selectStudentSql"/>
         WHERE department_no = #{deptNo}
     </select>
+
+    <select id="selectStudentByNo" parameterType="string" resultMap="studentResultMap">
+        <include refid="selectStudentSql"/>
+        WHERE student_no = #{sno}
+    </select>
+
+
+    <insert id="insertStudent" parameterType="Student">
+        <!--
+        selectKey는 PK를 생성하기 위한 요소이다.
+            resultType은 쿼리의 실행 결과 자료형이다.
+            keyProperty는 생성된 PK를 저장하기 위해 파라미터로 전달된 객체의 필드명을 지정한다.
+            order는 PK를 생성하기 위한 쿼리의 실행 시점을 결정한다.
+                BEFORE는 아래의 INSERT 쿼리 실행전에 PK를 생성하기 위한 쿼리를 실행한다.
+                AFTER는 아래의 INSERT 쿼리 실행 후 PK를 생성하기 위한 쿼리를 실행한다.
+        -->
+        <selectKey resultType="string" keyProperty="no" order="BEFORE">
+            SELECT CONCAT('A',RPAD(FLOOR((RAND()* 100000)+1),6,'0'))
+        </selectKey>
+
+        INSERT INTO tb_student (
+            student_no,
+            department_no,
+            student_name,
+            student_ssn,
+            student_address,
+            entrance_date,
+            absence_yn,
+            coach_professor_no
+        ) VALUES (
+            #{no},
+            #{deptNo},
+            #{name},
+            #{ssn},
+            #{address},
+            CURDATE(),
+            'N',
+            NULL
+        )
+    </insert>
+
+    <update id="updateStudent" parameterType="Student">
+        UPDATE tb_student
+        SET
+            department_no = #{deptNo},
+            student_name = #{name},
+            student_address = #{address},
+            absence_Yn = #{absenceYn}
+        WHERE student_no = #{no}
+    </update>
+
+    <delete id="deleteStudent" parameterType="string">
+        DELETE
+        FROM tb_student
+        WHERE student_no = #{sno}
+    </delete>
+
 </mapper>

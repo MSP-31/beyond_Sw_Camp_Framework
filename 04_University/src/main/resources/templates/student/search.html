@@ -20,6 +20,29 @@
             </select>
             <input type="submit" value="검색">
         </form>
+
+        <br>
+
+        <table border="1">
+            <tr>
+                <th>학번</th>
+                <th>이름</th>
+                <th>주소</th>
+                <th>휴학 여부</th>
+            </tr>
+            <tr th:if="${students == null}">
+                <td colspan="4">조회된 데이터가 없습니다.</td>
+            </tr>
+            <tr th:if="${students != null}" th:each="student : ${students}">
+                <td>
+                    <a th:text="${student.no}"
+                       th:href="@{/student/info(sno=${student.no})}"></a>
+                </td>
+                <td th:text="${student.name}"></td>
+                <td th:text="${student.address}"></td>
+                <td th:text="${student.absenceYn}"></td>
+            </tr>
+        </table>
     </main>
 </body>
 </html>
