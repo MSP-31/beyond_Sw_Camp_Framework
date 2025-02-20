@@ -16,6 +16,25 @@
         <result property="openYn" column="open_yn"/>
         <result property="capacity" column="capacity"/>
     </resultMap>
+
+    <!--
+    연관 관계 매핑
+    -->
+    <resultMap id="departmentResultMapWithStudents" type="Department" extends="departmentResultMap">
+        <!--
+        1. 쿼리문을 각각 만들어서 하나의 resultMap 에 매핑하는 방법
+
+        <collection property="students" javaType="arrayList"
+            select="com.beyond.university.student.model.mapper.StudentMapper.selectAllByDeptNo"
+            column="department_no"/>
+        -->
+        <!--
+        2. 하나의 쿼리문을 만들어서 resultMap 에서 매핑하는  방법
+        -->
+        <collection property="students" javaType="arrayList" columnPrefix="s_"
+            resultMap="com.beyond.university.student.model.mapper.StudentMapper.studentResultMap"/>
+    </resultMap>
+
     <!--
         쿼리문의 수행 결과를 담은 ResultSet은 resultType의 객체에 조회 결과를 자동으로 매핑해서 리턴한다.
         단, 조회 결과의 컬럼명과 자바 클래스의 필드명이 동일해야 자동으로 매핑된다.(대소문자는 구분하지 않음)
@@ -42,4 +61,53 @@
         FROM tb_department
         ORDER BY department_name ASC;
     </select>
+
+    <!-- 학과 상세 조회
+    <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMap">
+        SELECT department_no,
+               department_name,
+               category,
+               open_yn,
+               capacity
+        FROM tb_department
+        WHERE department_no = #{deptNo}
+    </select>
+    -->
+
+    <!--
+    학과 상세 조회 (학생 정보 포함)
+    1. 쿼리문을 각각 만들어서 하나의 resultMap 에서 매핑하는 방법
+
+    <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMapWithStudents">
+        SELECT department_no,
+               department_name,
+               category,
+               open_yn,
+               capacity
+        FROM tb_department
+        WHERE department_no = #{deptNo}
+    </select>
+    -->
+    <!--
+    2. 하나의 쿼리문을 만들어서 resultMap 뭐시기
+    -->
+    <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMapWithStudents">
+        SELECT td.department_no,
+               td.department_name,
+               td.category,
+               td.open_yn,
+               td.capacity,
+               ts.student_no AS 's_student_no',
+               ts.department_no AS 's_department_no',
+               ts.student_name AS 's_student_name',
+               ts.student_ssn AS 's_student_ssn',
+               ts.student_address AS 's_student_address',
+               ts.entrance_date AS 's_entrance_date',
+               ts.absence_yn AS 's_absence_yn',
+               ts.coach_professor_no AS 's_coach_professor_no'
+        FROM tb_department td
+        LEFT OUTER JOIN tb_student ts ON td.department_no = ts.department_no
+        WHERE td.department_no = #{deptNo}
+    </select>
+
 </mapper>

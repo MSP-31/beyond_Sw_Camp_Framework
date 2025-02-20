@@ -1,5 +1,7 @@
 package com.beyond.university.student.model.service;
 
+import com.beyond.university.department.model.mapper.DepartmentMapper;
+import com.beyond.university.department.model.vo.Department;
 import com.beyond.university.student.model.mapper.StudentMapper;
 import com.beyond.university.student.model.vo.Student;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudentServiceImpl implements StudentService {
     private final StudentMapper studentMapper;
+    private final DepartmentMapper departmentMapper;
 
     @Override
     public List<Student> getStudentsByDeptNo(String deptNo) {
@@ -42,8 +45,8 @@ public class StudentServiceImpl implements StudentService {
         return result;
     }
 
-    @Override
     @Transactional
+    @Override
     public int delete(String sno) {
         return studentMapper.deleteStudent(sno);
     }

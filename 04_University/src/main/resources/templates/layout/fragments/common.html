@@ -3,6 +3,15 @@
 <body>
     <header th:fragment="header">
         <h2><a th:href="@{/}" style="color: black; text-decoration: none">스프링 부트 웹</a></h2>
+
+        <form th:action="@{/logout}" method="post">
+            <!--
+            자동으로 _csrf 설정이 포함된다.
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            -->
+            <input type="button" value="내 정보">
+            <input type="submit" value="로그아웃">
+        </form>
     </header>
 
     <footer th:fragment="footer">

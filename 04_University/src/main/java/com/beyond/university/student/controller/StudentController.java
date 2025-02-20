@@ -2,6 +2,7 @@ package com.beyond.university.student.controller;
 
 import com.beyond.university.department.model.dto.DepartmentsDto;
 import com.beyond.university.department.model.service.DepartmentService;
+import com.beyond.university.department.model.vo.Department;
 import com.beyond.university.student.model.dto.StudentRegisterRequestDto;
 import com.beyond.university.student.model.dto.StudentUpdateRequestDto;
 import com.beyond.university.student.model.dto.StudentsDto;
@@ -64,6 +65,17 @@ public class StudentController {
                         .stream()
                         .map(DepartmentsDto::new)
                         .toList();
+
+        // 연관 관계 매핑 테스트
+        // System.out.println(student);
+        // System.out.println(student.getDepartment());
+        Department department = departmentService.getDepartmentByNo(student.getDeptNo());
+
+        System.out.println(department);
+
+        for (Student s : department.getStudents()) {
+            System.out.println(s);
+        }
 
         modelAndView.addObject("student", student);
         modelAndView.addObject("departments", departments);

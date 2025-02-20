@@ -3,6 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <title th:replace="${title}">레이아웃 타이틀</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #f2f2f2 25%, #ffffff 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            /*display: flex;*/
+            /*flex-direction: column;*/
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        select, input[type="submit"], input[type="button"], input[type="text"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+        }
+
+        input[type="submit"], input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover, input[type="button"]:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            max-width: 800px;
+            border-collapse: collapse;
+            margin: 0 auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        header {
+            background-color: #4CAF50;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        header h2 {
+            margin: 0;
+            display: inline-block;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+        }
+
+        header form {
+            float: right;
+        }
+
+        header input[type="button"],
+        header input[type="submit"] {
+            margin-left: 10px;
+            padding: 8px 15px;
+            background-color: #f2f2f2;
+            color: #333;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        header input[type="button"]:hover,
+        header input[type="submit"]:hover {
+            background-color: #ddd;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+
+        .content {
+            flex: 1;
+        }
+
+    </style>
 </head>
 <body>
     <header th:replace="~{layout/fragments/common :: header}"></header>
