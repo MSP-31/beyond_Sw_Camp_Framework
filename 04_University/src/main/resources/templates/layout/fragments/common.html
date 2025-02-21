@@ -1,9 +1,14 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org/">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
     <header th:fragment="header">
         <h2><a th:href="@{/}" style="color: black; text-decoration: none">스프링 부트 웹</a></h2>
-
+        <!-- 사용자의 권한에 따라 HTML 요소를 표시하거나 숨길 수 있다. -->
+        <p sec:authorize="hasRole('ADMIN')">관리자님 안녕하세요.</p>
+        <p sec:authorize="!hasRole('ADMIN')">
+            <span sec:authentication="principal.username"></span>님 안녕하세요.
+        </p>
         <form th:action="@{/logout}" method="post">
             <!--
             자동으로 _csrf 설정이 포함된다.
