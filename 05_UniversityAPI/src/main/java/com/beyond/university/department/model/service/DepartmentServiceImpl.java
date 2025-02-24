@@ -3,7 +3,9 @@ package com.beyond.university.department.model.service;
 import com.beyond.university.department.model.mapper.DepartmentMapper;
 import com.beyond.university.department.model.vo.Department;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,7 +16,50 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentMapper departmentMapper;
 
     @Override
-    public List<Department> getDepartments() {
-        return departmentMapper.selectAll();
+    public int getTotalCount(String openYn) {
+        return departmentMapper.selectDepartmentsCount(openYn);
+    }
+
+    @Override
+    public List<Department> getDepartments(int page, int numOfRows, String openYn) {
+        /*
+        마이바티스에서 페이징 처리
+
+        마이바티스에서는 페이징 처리 위해 RowBounds라는 클래스를 제공해 준다.
+        RowBounds의 객체를 생성할 때 offset과 limit 값을 전달해서 페이징 처리를 쉽게 구현한다.
+        (offset 만큼 거너뛰고 limit 만큼 가져온다.)
+
+        offset = 0, limit = 10
+         - 0개를 건너뛰고 10개를 가져온다. (1 ~ 10)
+
+        offset = 10, limit = 10
+         - 10개를 건너뛰고 10개를 가져온다. (11 ~ 20)
+
+        offset = 20, limit = 10
+         - 20개를 건너뛰고 10개를 가져온다. (21 ~ 10)
+         */
+        int limit = numOfRows;
+        int offset = (page - 1) * numOfRows;
+        RowBounds rowBounds = new RowBounds(offset, limit);
+
+        return departmentMapper.selectAll(openYn, rowBounds);
+    }
+
+    @Override
+    public Optional<Department> getDepartmentByNo(String deptNo) {
+
+        return departmentMapper.selectDepartmentByNo(deptNo);
+    }
+
+    @Override
+    @Transactional
+    public void save(Department department) {
+        if (department.getNo() != null) {
+            //update
+        } else {
+            // insert
+            departmentMapper.insertDepartment(department);
+        }
+
     }
 }

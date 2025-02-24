@@ -11,14 +11,60 @@
         <result property="capacity" column="capacity"/>
     </resultMap>
 
-    <select id="selectAll" resultType="Department">
-        SELECT department_no AS 'no',
-               department_name AS 'name',
+    <select id="selectDepartmentsCount" resultType="_int">
+        SELECT COUNT(*)
+        FROM tb_department
+        <where>
+            <if test="openYn != null">
+                open_yn = #{openYn}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectAll" resultMap="departmentResultMap">
+        SELECT department_no,
+               department_name,
                category,
-               open_yn AS 'openYn',
+               open_yn,
                capacity
         FROM tb_department
+        <if test="openYn != null">
+            WHERE open_yn = #{openYn}
+        </if>
         ORDER BY department_name ASC;
     </select>
+
+    <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMap">
+        SELECT department_no,
+                department_name,
+                category,
+                open_yn,
+                capacity
+        FROM tb_department
+        WHERE department_no = #{deptNo}
+    </select>
+
+    <insert id="insertDepartment" parameterType="Department">
+
+        <selectKey resultType="string" keyProperty="no" order="BEFORE">
+            SELECT LPAD(CONVERT(department_no,INT) + 1, 3, '0')
+            FROM tb_department
+            ORDER BY department_no DESC LIMIT 1
+        </selectKey>
+
+        INSERT INTO tb_department(
+            department_no,
+            department_name,
+            category,
+            open_yn,
+            capacity
+        ) VALUES (
+            #{no},
+            #{name},
+            #{category},
+            #{openYn},
+            #{capacity}
+        )
+    </insert>
 
 </mapper>
