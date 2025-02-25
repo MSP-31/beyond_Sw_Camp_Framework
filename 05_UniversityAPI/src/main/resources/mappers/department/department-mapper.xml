@@ -67,4 +67,53 @@
         )
     </insert>
 
+    <update id="updateDepartment" parameterType="Department">
+        UPDATE tb_department
+        <set>
+            <if test="name != null">
+                department_name = #{name},
+            </if>
+            <if test="category != null">
+                category = #{category},
+            </if>
+            <if test="openYn != null">
+                open_yn = #{openYn},
+            </if>
+            <if test="capacity >= 0">
+                capacity = #{capacity}
+            </if>
+        </set>
+        WHERE
+            department_no = #{no}
+
+    </update>
+
+    <delete id="deleteDepartment" parameterType="string">
+        DELETE FROM tb_department
+        WHERE department_no = #{deptNo}
+    </delete>
+
+    <select id="selectAllOfCategory" parameterType="string">
+        SELECT td.department_no as no,
+               td.department_name as name,
+               tc.class_name as category,
+               tc.class_type as openYn,
+               td.capacity as capacity
+        FROM tb_department td
+        JOIN tb_class tc ON tc.department_no = td.department_no
+        WHERE td.department_no = #{deptNo}
+        GROUP BY tc.class_name
+    </select>
+
+    <select id="selectDeptNoCount" resultType="_int">
+        SELECT COUNT(*)
+        FROM tb_department td
+        JOIN tb_class tc ON tc.department_no = td.department_no
+        <where>
+            <if test="deptNo != null">
+                td.department_no = #{deptNo}
+            </if>
+        </where>
+    </select>
+
 </mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper>
+    <resultMap id="subjectResultMap" type="Subject">
+        <id property="no" column="class_no"/>
+        <result property="name" column="department_no"/>
+        <result property="ClassNo" column="prepending_class_no"/>
+        <result property="className" column="class_name"/>
+        <result property="classType" column="class_type"/>
+    </resultMap>
+
+    <select id="selectSubjectCount" parameterType="string">
+        SELECT COUNT(*)
+        FROM tb_department
+        WHERE department_no = #{deptNo}
+    </select>
+
+    <select id="selectAllByDeptNo" parameterType="string" resultMap="subjectResultMap">
+        SELECT class_no,
+               department_no,
+               prepending_class_no,
+               class_name,
+               class_type
+        FROM tb_class
+        WHERE department_no = #{deptNo}
+        ORDER BY class_name = ASC
+    </select>
+</mapper>

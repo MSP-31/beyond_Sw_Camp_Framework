@@ -56,10 +56,29 @@ public class DepartmentServiceImpl implements DepartmentService {
     public void save(Department department) {
         if (department.getNo() != null) {
             //update
+            departmentMapper.updateDepartment(department);
         } else {
             // insert
             departmentMapper.insertDepartment(department);
         }
+    }
 
+    @Override
+    @Transactional
+    public void delete(String deptNo) {
+        departmentMapper.deleteDepartment(deptNo);
+    }
+
+    @Override
+    public List<Department> getDepartmentCategory (int page, int numOfRows, String deptNo){
+        int offset = (page - 1) * numOfRows;
+        RowBounds rowBounds = new RowBounds(offset, numOfRows);
+
+        return departmentMapper.selectAllOfCategory(deptNo,rowBounds);
+    }
+
+    @Override
+    public int getTotalCounts(String deptNo) {
+        return departmentMapper.selectDeptNoCount(deptNo);
     }
 }

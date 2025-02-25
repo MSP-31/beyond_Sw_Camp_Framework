@@ -13,4 +13,10 @@ public interface DepartmentService {
     Optional<Department> getDepartmentByNo(String deptNo);
 
     void save(Department department);
+
+    void delete(String deptNo);
+
+    List<Department> getDepartmentCategory(int page, int numOfRows, String deptNo);
+
+    int getTotalCounts(String deptNo);
 }

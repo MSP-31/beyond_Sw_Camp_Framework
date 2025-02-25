@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,18 +19,38 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     @ExceptionHandler(UniversityException.class)
     public ResponseEntity<Object> handleException(UniversityException e) {
-        // Map<String, Object> response = new HashMap<>();
 
         log.error("UniversityException : {}",e.getMessage());
 
-        // response.put("code", e.getStatus().value());
-        // response.put("status", e.getStatus().name());
-        // response.put("message", e.getMessage());
-
-        // return new ResponseEntity<>(response, e.getStatus());
         return new ResponseEntity<>(
                 new ApiErrorResponseDto(e.getStatus().value(),e.getType(),e.getMessage()),
                 e.getStatus()
+        );
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiErrorResponseDto> handleException(MethodArgumentNotValidException e) {
+        StringBuilder errors = new StringBuilder();
+
+        log.error("MethodArgumentNotValidException : {}", e.getMessage());
+
+        for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+            errors
+                    .append(fieldError.getField())
+                    .append("(")
+                    .append(fieldError.getDefaultMessage())
+                    .append("), ");
+        }
+
+
+        errors.replace(errors.lastIndexOf(","), errors.length(), "");
+
+        return new ResponseEntity<>(
+                new ApiErrorResponseDto(
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.name(),
+                        e.getMessage()
+                ), HttpStatus.BAD_REQUEST
         );
     }
 
