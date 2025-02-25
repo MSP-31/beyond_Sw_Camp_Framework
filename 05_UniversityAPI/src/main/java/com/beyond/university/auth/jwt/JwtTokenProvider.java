@@ -20,12 +20,12 @@ import java.util.Map;
 
 @Slf4j
 @Component
-public class jwtTokenProvider {
+public class JwtTokenProvider {
     private final SecretKey secretKey;
     private final UserDetailsService userDetailsService;
     private static final long ACCESS_TOKEN_EXP = 1000L * 60L * 15L; // 15분
 
-    public jwtTokenProvider(@Value("${springboot.jwt.secret}")String secret,
+    public JwtTokenProvider(@Value("${springboot.jwt.secret}")String secret,
                             UserDetailsService userDetailsService) {
         log.debug("Secret : {}", secret);
         // 바이트 배열로 가지고 와서 사용
