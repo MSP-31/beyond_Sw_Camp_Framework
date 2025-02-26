@@ -7,5 +7,4 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface AuthMapper {
     User selectUserById(@Param("id") String id);
-
 }

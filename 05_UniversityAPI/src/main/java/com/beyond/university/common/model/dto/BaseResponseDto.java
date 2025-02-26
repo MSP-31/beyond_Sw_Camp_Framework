@@ -2,6 +2,7 @@ package com.beyond.university.common.model.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
@@ -12,12 +13,12 @@ import java.util.List;
 @ToString
 public class BaseResponseDto<T> {
     @Schema(description = "응답 코드", example = "200")
-    protected int code;
+    protected final int code;
 
-    @Schema(description = "응답 메세지", example = "OK")
+    @Schema(description = "응답 메시지", example = "OK")
     protected final String message;
 
-    @Schema(description = "응답 데이터", example = "1")
+    @Schema(description = "응답 데이터")
     protected final List<T> items;
 
     public BaseResponseDto(HttpStatus status, T department) {

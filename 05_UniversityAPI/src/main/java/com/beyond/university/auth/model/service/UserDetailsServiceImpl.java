@@ -13,14 +13,13 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-
     private final AuthMapper authMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = authMapper.selectUserById(username);
 
-        if(user == null) {
+        if (user == null) {
             throw new UsernameNotFoundException(username);
         }
 
@@ -29,4 +28,3 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return user;
     }
 }
-

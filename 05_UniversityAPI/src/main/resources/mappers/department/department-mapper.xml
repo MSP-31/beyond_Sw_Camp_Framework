@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- mybatis mapper 설정 파일임을 선언한다. -->
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.beyond.university.department.model.mapper.DepartmentMapper">
@@ -31,23 +30,22 @@
         <if test="openYn != null">
             WHERE open_yn = #{openYn}
         </if>
-        ORDER BY department_name ASC;
+        ORDER BY department_name ASC
     </select>
 
     <select id="selectDepartmentByNo" parameterType="string" resultMap="departmentResultMap">
         SELECT department_no,
-                department_name,
-                category,
-                open_yn,
-                capacity
+               department_name,
+               category,
+               open_yn,
+               capacity
         FROM tb_department
         WHERE department_no = #{deptNo}
     </select>
 
     <insert id="insertDepartment" parameterType="Department">
-
         <selectKey resultType="string" keyProperty="no" order="BEFORE">
-            SELECT LPAD(CONVERT(department_no,INT) + 1, 3, '0')
+            SELECT LPAD(CONVERT(department_no, INT) + 1, 3, '0')
             FROM tb_department
             ORDER BY department_no DESC LIMIT 1
         </selectKey>
@@ -85,35 +83,11 @@
         </set>
         WHERE
             department_no = #{no}
-
     </update>
 
     <delete id="deleteDepartment" parameterType="string">
-        DELETE FROM tb_department
+        DELETE
+        FROM tb_department
         WHERE department_no = #{deptNo}
     </delete>
-
-    <select id="selectAllOfCategory" parameterType="string">
-        SELECT td.department_no as no,
-               td.department_name as name,
-               tc.class_name as category,
-               tc.class_type as openYn,
-               td.capacity as capacity
-        FROM tb_department td
-        JOIN tb_class tc ON tc.department_no = td.department_no
-        WHERE td.department_no = #{deptNo}
-        GROUP BY tc.class_name
-    </select>
-
-    <select id="selectDeptNoCount" resultType="_int">
-        SELECT COUNT(*)
-        FROM tb_department td
-        JOIN tb_class tc ON tc.department_no = td.department_no
-        <where>
-            <if test="deptNo != null">
-                td.department_no = #{deptNo}
-            </if>
-        </where>
-    </select>
-
 </mapper>

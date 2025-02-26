@@ -14,15 +14,11 @@ public interface DepartmentMapper {
 
     List<Department> selectAll(@Param("openYn") String openYn, RowBounds rowBounds);
 
-    Optional<Department> selectDepartmentByNo(@Param("deptNo") String departmentNo);
+    Optional<Department> selectDepartmentByNo(@Param("deptNo") String deptNo);
 
     void insertDepartment(Department department);
 
     void updateDepartment(Department department);
 
-    void deleteDepartment(@Param("deptNo") String departmentNo);
-
-    List<Department> selectAllOfCategory(String deptNo, RowBounds rowBounds);
-
-    int selectDeptNoCount(String deptNo);
+    void deleteDepartment(@Param("deptNo") String deptNo);
 }

@@ -17,6 +17,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public int getTotalCount(String openYn) {
+
         return departmentMapper.selectDepartmentsCount(openYn);
     }
 
@@ -27,20 +28,24 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         마이바티스에서는 페이징 처리 위해 RowBounds라는 클래스를 제공해 준다.
         RowBounds의 객체를 생성할 때 offset과 limit 값을 전달해서 페이징 처리를 쉽게 구현한다.
-        (offset 만큼 거너뛰고 limit 만큼 가져온다.)
+        (offset 만큼 건너뛰고 limit 만큼 가져온다.)
 
         offset = 0, limit = 10
-         - 0개를 건너뛰고 10개를 가져온다. (1 ~ 10)
+          - 0개를 건너뛰고 10개를 가져온다. (1 ~ 10)
 
         offset = 10, limit = 10
-         - 10개를 건너뛰고 10개를 가져온다. (11 ~ 20)
+          - 10개를 건너뛰고 10개를 가져온다. (11 ~ 20)
 
         offset = 20, limit = 10
-         - 20개를 건너뛰고 10개를 가져온다. (21 ~ 10)
-         */
+          - 20개를 건너뛰고 10개를 가져온다. (21 ~ 30)
+        */
         int limit = numOfRows;
-        int offset = (page - 1) * numOfRows;
+        int offset = (page - 1) * limit;
         RowBounds rowBounds = new RowBounds(offset, limit);
+
+//        if(true) {
+//            throw new RuntimeException("서비스 실행 중 에러 발생");
+//        }
 
         return departmentMapper.selectAll(openYn, rowBounds);
     }
@@ -55,7 +60,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Transactional
     public void save(Department department) {
         if (department.getNo() != null) {
-            //update
+            // update
             departmentMapper.updateDepartment(department);
         } else {
             // insert
@@ -67,18 +72,5 @@ public class DepartmentServiceImpl implements DepartmentService {
     @Transactional
     public void delete(String deptNo) {
         departmentMapper.deleteDepartment(deptNo);
-    }
-
-    @Override
-    public List<Department> getDepartmentCategory (int page, int numOfRows, String deptNo){
-        int offset = (page - 1) * numOfRows;
-        RowBounds rowBounds = new RowBounds(offset, numOfRows);
-
-        return departmentMapper.selectAllOfCategory(deptNo,rowBounds);
-    }
-
-    @Override
-    public int getTotalCounts(String deptNo) {
-        return departmentMapper.selectDeptNoCount(deptNo);
     }
 }

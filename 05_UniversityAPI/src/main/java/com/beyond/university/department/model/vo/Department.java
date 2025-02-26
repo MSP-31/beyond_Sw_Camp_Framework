@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -24,7 +22,7 @@ public class Department {
 
     private int capacity;
 
-    public void setDepartmentRequestDto(@Valid DepartmentRequestDto requestDto) {
+    public void setDepartmentRequestDto(DepartmentRequestDto requestDto) {
         this.name = requestDto.getName();
         this.category = requestDto.getCategory();
         this.openYn = requestDto.getOpenYn();

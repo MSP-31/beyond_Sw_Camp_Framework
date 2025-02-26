@@ -1,18 +1,16 @@
 package com.beyond.university.common.exception.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @Getter
-@RequiredArgsConstructor
+@ToString
+@AllArgsConstructor
 public class ApiErrorResponseDto {
-    private int value;
-    private String type;
-    private String message;
+    private final int code;
 
-    public ApiErrorResponseDto(int value, String type, String message) {
-        this.value = value;
-        this.type = type;
-        this.message = message;
-    }
+    private final String status;
+
+    private final String message;
 }

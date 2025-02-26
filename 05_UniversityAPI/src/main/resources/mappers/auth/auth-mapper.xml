@@ -16,20 +16,21 @@
         <result property="enrollDate" column="enroll_date" />
         <result property="modifyDate" column="modify_date" />
     </resultMap>
+
     <select id="selectUserById" parameterType="string" resultMap="userResultMap">
-        SELECT  no,
-                id,
-                password,
-                role,
-                name,
-                email,
-                phone,
-                address,
-                hobby,
-                status,
-                enroll_date,
-                modify_date
-        FROM user
+        SELECT no,
+			   id,
+               password,
+			   role,
+			   name,
+			   email,
+			   phone,
+			   address,
+			   hobby,
+			   status,
+			   enroll_date,
+			   modify_date
+		FROM user
         WHERE id = #{id}
     </select>
 </mapper>

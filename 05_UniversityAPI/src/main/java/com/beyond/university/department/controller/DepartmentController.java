@@ -1,5 +1,6 @@
 package com.beyond.university.department.controller;
 
+
 import com.beyond.university.common.exception.UniversityException;
 import com.beyond.university.common.exception.message.ExceptionMessage;
 import com.beyond.university.common.model.dto.BaseResponseDto;
@@ -39,24 +40,21 @@ import java.util.List;
 
     1) 학과 목록 조회
      - GET /api/v1/university-service/departments
-
+    
     2) 학과 상세 조회
      - GET /api/v1/university-service/departments/{department-no}
-
+    
     3) 학과 등록
      - POST /api/v1/university-service/departments
-
+    
     4) 학과 수정
      - PUT /api/v1/university-service/departments/{department-no}
-
+    
     5) 학과 삭제
      - DELETE /api/v1/university-service/departments/{department-no}
-     - 응답은 204(no content), 200(ok)
 
-     6) 학과별 수업 과목 조회
-      - GET /api/v1/university-service/departments/{department-no}/subjects
-      - 파라미터는 page, numOfRows
-      - 응답은 200(ok)
+    6) 학과별 수업 과목 조회
+     - GET /api/v1/university-service/departments/{department-no}/subjects
  */
 
 @RestController
@@ -91,12 +89,12 @@ public class DepartmentController {
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
+                    description = "INTERNAL SERVER ERROR",
                     content = @Content(mediaType = "application/json")
             )
     })
-    public ResponseEntity<ItemsResponseDto<Department>> create(@RequestParam int page,
-                                                               @RequestParam int numOfRows, @RequestParam(required = false) String openYn) {
+    public ResponseEntity<ItemsResponseDto<Department>> getDepartments(@RequestParam int page,
+                                                           @RequestParam int numOfRows, @RequestParam(required = false) String openYn) {
 
         int totalCount = departmentService.getTotalCount(openYn);
         List<Department> departments = departmentService.getDepartments(page, numOfRows, openYn);
@@ -115,7 +113,7 @@ public class DepartmentController {
             throw new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND);
         }
     }
-
+    
     @Operation(summary = "학과 상세 조회", description = "학과 번호로 학과의 상세 정보를 조회한다.")
     @ApiResponses({
             @ApiResponse(
@@ -130,7 +128,7 @@ public class DepartmentController {
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
+                    description = "INTERNAL SERVER ERROR",
                     content = @Content(mediaType = "application/json")
             )
     })
@@ -138,7 +136,7 @@ public class DepartmentController {
     public ResponseEntity<BaseResponseDto<Department>> getDepartment(
             @Parameter(description = "학과 번호", example = "001") @PathVariable("department-no") String deptNo) {
         Department department = departmentService.getDepartmentByNo(deptNo)
-                .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND));
+                    .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND));
 
         return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, department));
     }
@@ -158,10 +156,11 @@ public class DepartmentController {
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
+                    description = "INTERNAL SERVER ERROR",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             )
     })
+    // public ResponseEntity<Void> create(@RequestBody DepartmentRequestDto requestDto) {
     public ResponseEntity<BaseResponseDto<Department>> create(
             @Valid @RequestBody DepartmentRequestDto requestDto) {
         Department department = requestDto.toDepartment();
@@ -177,8 +176,8 @@ public class DepartmentController {
     @Operation(summary = "학과 정보 수정", description = "학과 정보를 JSON으로 받아 수정한다.")
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "201",
-                    description = "CREATED",
+                    responseCode = "200",
+                    description = "OK",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             ),
             @ApiResponse(
@@ -187,62 +186,74 @@ public class DepartmentController {
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             ),
             @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT FOUND",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
                     responseCode = "500",
-                    description = "INTERNAL_SERVER_ERROR",
+                    description = "INTERNAL SERVER ERROR",
                     content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             )
     })
+    // public ResponseEntity<Void> update(
     public ResponseEntity<BaseResponseDto<Department>> update(
-            @Parameter(description = "학과 번호", example = "001")
-            @PathVariable("department-no") String deptNo,
+            @Parameter(description = "학과 번호", example = "001") @PathVariable("department-no") String deptNo,
             @Valid @RequestBody DepartmentRequestDto requestDto) {
 
-        Department department =
-                departmentService.getDepartmentByNo(deptNo)
-                        .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND));
+        Department department = departmentService.getDepartmentByNo(deptNo)
+                .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND));
 
         department.setDepartmentRequestDto(requestDto);
 
         departmentService.save(department);
 
-        // return ResponseEntity.ok().build();
+        // return ResponseEntity.noContent().build();
         return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, department));
     }
 
-    @DeleteMapping("/departments/{department-no}")
-    @Operation(summary = "학과 정보 삭제", description = "학과 정보를 JSON으로 받아 삭제한다.")
+    @DeleteMapping("departments/{department-no}")
+    @Operation(summary = "학과 삭제", description = "학과 번호로 해당 학과를 삭제한다.")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "FORBIDDEN",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT FOUND",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTERNAL SERVER ERROR",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            )
+    })
+    // public ResponseEntity<Void> delete(
     public ResponseEntity<BaseResponseDto<Department>> delete(
-            @PathVariable("department-no") String deptNo) {
+            @Parameter(description = "학과 번호", example = "001") @PathVariable("department-no") String deptNo) {
 
-        departmentService.getDepartmentByNo(deptNo)
-                .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NO_CONTENT));
+        Department department = departmentService.getDepartmentByNo(deptNo)
+                .orElseThrow(() -> new UniversityException(ExceptionMessage.DEPARTMENT_NOT_FOUND));
 
-        departmentService.delete(deptNo);
+        departmentService.delete(department.getNo());
 
-        return ResponseEntity.ok().build();
+        // return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(new BaseResponseDto<>(HttpStatus.OK, department));
     }
 
-    /*
-        @GetMapping("/departments/{department-no}/subjects")
-        @Operation(summary = "학과별 수업 과목 조회", description = "학과별 수업 과목을 조회한다.")
-        @Parameters({
-                @Parameter(name = "page", description = "페이지 번호", example = "1"),
-                @Parameter(name = "numOfRows", description = "한 페이지 결과 수", example = "10"),
-                @Parameter(name = "department-no", description = "학과 번호", example = "001")
-        })
-        public ResponseEntity<ItemsResponseDto<Department>> getDepartmentCategory(
-                @RequestParam int page,
-                @RequestParam int numOfRows,
-                @PathVariable("department-no") String deptNo) {
-
-            int totalCount = departmentService.getTotalCounts(deptNo);
-
-            List<Department> departments = departmentService.getDepartmentCategory(page, numOfRows, deptNo);
-
-            return ResponseEntity.ok(new ItemsResponseDto<>(HttpStatus.OK, departments, page, totalCount));
-        }
-
-     */
     @GetMapping("/departments/{department-no}/subjects")
     @Operation(summary = "학과별 과목 목록 조회", description = "학과 번호로 해당 학과에 포함된 과목들을 조회한다.")
     @Parameters({
@@ -255,6 +266,16 @@ public class DepartmentController {
                     responseCode = "200",
                     description = "OK",
                     content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "FORBIDDEN",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE)
             ),
             @ApiResponse(
                     responseCode = "404",

@@ -1,5 +1,7 @@
 package com.beyond.university.config;
 
+import com.beyond.university.auth.handler.AccessDeniedHandlerImpl;
+import com.beyond.university.auth.handler.AuthenticationEntrypointImpl;
 import com.beyond.university.auth.jwt.JwtAuthenticationFilter;
 import com.beyond.university.auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -25,27 +27,56 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)      //비활성화
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .httpBasic(AbstractHttpConfigurer::disable)// 비활성화
-                .formLogin(AbstractHttpConfigurer::disable)// 비활성화
-                // JWT 토큰으로 인증을 처리하기 때문에 세션 사용하지 않는다.
-                .sessionManagement(ssesion ->
-                        ssesion.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                // JWT 토큰으로 인증을 처리하기 때문에 세션을 사용하지 않는다.
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 // JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 추가하는 설정
                 // JwtAuthenticationFilter에서 인증이 정상적으로 처리되면 UsernamePasswordAuthenticationFilter는 자동으로 통과한다.
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                .addFilterBefore(
+                        new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
                 )
-                .authorizeHttpRequests(requests ->{
-                        // Swagger
-                        requests.requestMatchers("/api-docs/", "/swagger-ui/", "/actuator/health").permitAll();
-                        // 모든 GET 요청의 경우 허용
-                        requests.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll();
-                        // 이 외의 모든 요청은 인증이 필요
-                        requests.anyRequest().authenticated();
+                /* 람다식으로 상태 코드만 전달하도록 구현
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                // 인증되지 않은 사용자가 리소스에 접근하려고 할 때 호출되는 핸들러이다.
+                                // 401 Unauthorized 응답을 반환하도록 구현한다.
+                                .authenticationEntryPoint((request, response, authException) ->
+                                    response.setStatus(HttpStatus.UNAUTHORIZED.value())
+                                )
+                                // 인증된 사용자가 권한이 없는 리소스에 접근할 때 호출되는 핸들러이다.
+                                // 403 Forbidden 응답을 반환하도록 구현한다.
+                                .accessDeniedHandler((request, response, accessDeniedException) ->
+                                    response.setStatus(HttpStatus.FORBIDDEN.value())
+                                )
+
+
+                )*/
+                /* 람다식으로 상태 코드만 전달하도록 구현 */
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .authenticationEntryPoint(new AuthenticationEntrypointImpl())
+                                .accessDeniedHandler(new AccessDeniedHandlerImpl())
+
+                )
+                .authorizeHttpRequests(requests -> {
+                    // Swagger
+                    requests.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/actuator/health").permitAll();
+                    // 로그인, 로그아웃 허용
+                    requests.requestMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll();
+                    // 모든 GET 요청의 경우 허용
+                    requests.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll();
+                    // DELETE 요청의 경우 관리자만 허용
+                    requests.requestMatchers(HttpMethod.DELETE, "/api/v1/**").hasRole("ADMIN");
+                    // 이 외의 모든 요청은 권한이 필요
+                    requests.anyRequest().authenticated();
                 });
+
         return http.build();
     }
 
