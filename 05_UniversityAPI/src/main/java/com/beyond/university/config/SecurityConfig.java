@@ -67,8 +67,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests -> {
                     // Swagger
                     requests.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/actuator/health").permitAll();
-                    // 로그인, 로그아웃 허용
-                    requests.requestMatchers(HttpMethod.POST,"/api/v1/auth/login").permitAll();
+                    // 로그인, 로그아웃, 토큰 재발급 허용
+                    requests.requestMatchers(HttpMethod.POST,"/api/v1/auth/login","/api/v1/auth/logout","/api/v1/auth/refresh").permitAll();
                     // 모든 GET 요청의 경우 허용
                     requests.requestMatchers(HttpMethod.GET, "/api/v1/**").permitAll();
                     // DELETE 요청의 경우 관리자만 허용

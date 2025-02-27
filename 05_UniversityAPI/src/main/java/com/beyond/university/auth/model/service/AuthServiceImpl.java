@@ -38,6 +38,33 @@ public class AuthServiceImpl implements AuthService {
     public void logout(String bearerToken) {
         String accessToken = jwtTokenProvider.resolveToken(bearerToken);
 
+        if(accessToken == null || !jwtTokenProvider.validateToken(accessToken)){
+            throw new UniversityException(ExceptionMessage.ACCESS_TOKEN_INVALID);
+        }
         jwtTokenProvider.addBlacklist(accessToken);
+        jwtTokenProvider.deleteRefreshToken(accessToken);
+    }
+
+    @Override
+    public TokenResponseDto refresh(String bearerToken) {
+        String refreshToken = jwtTokenProvider.resolveToken(bearerToken);
+
+        // 1. Refresh Token 검증
+        if(refreshToken == null || !jwtTokenProvider.validateToken(refreshToken)){
+            throw new UniversityException(ExceptionMessage.REFRESH_TOKEN_INVALID);
+        }
+
+        // 2. Redis(DB)에서 리프레시 토큰 비교
+        if(!jwtTokenProvider.isInvalidRefreshToken(refreshToken)){
+            throw new UniversityException(ExceptionMessage.REFRESH_TOKEN_INVALID);
+        }
+
+        // 3. 사용자 정보 조회 후 새로운 Access Token 생성
+        User user = authMapper.selectUserById(jwtTokenProvider.getUserName(refreshToken));
+
+        return new TokenResponseDto(
+                jwtTokenProvider.createAccessToken(user.getUsername(),user.getRole()),
+                refreshToken
+        );
     }
 }

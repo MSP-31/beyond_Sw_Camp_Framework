@@ -3,14 +3,11 @@ package com.beyond.university.auth.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -30,6 +27,7 @@ public class JwtTokenProvider {
     private final UserDetailsService userDetailsService;
     private final RedisTemplate<String,String> redisTemplate;
     private static final long ACCESS_TOKEN_EXP = 1000L * 60L * 15L; // 15분
+    private static final long REFRESH_TOKEN_EXP = 1000L * 60L * 60L *24L; // 1일
 
     public JwtTokenProvider(
             @Value("${springboot.jwt.secret}") String secret,
@@ -58,7 +56,12 @@ public class JwtTokenProvider {
 
     // RefreshToken을 생성하는 메소드
     public String createRefreshToken(String username) {
-        return "";
+        Map<String, String> claims = Map.of("username", username);
+        String refreshToken = createToken(claims, REFRESH_TOKEN_EXP);
+
+        redisTemplate.opsForValue().set("refresh:" + username,refreshToken, REFRESH_TOKEN_EXP, TimeUnit.MILLISECONDS);
+
+        return refreshToken;
     }
 
     private String createToken(Map<String, String> claims, long tokenExp) {
@@ -72,19 +75,13 @@ public class JwtTokenProvider {
                 .signWith(secretKey) // 서명을 생성
                 .compact(); // JWT 토큰을 생성
     }
+
     // 토큰이 유효한지 체크하는 메소드 (토큰이 유효하면 true, 만료되었으면 false 반환)
-
     public boolean validateToken(String token) {
-        Jws<Claims> claims = Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token);
-
-        return !claims.getPayload().getExpiration().before(new Date());
+        return !getClaims(token).getExpiration().before((new Date()));
     }
-    // 클라이언트가 헤더를 통해 서버로 전달한 토큰을 추출하는 메소드
 
+    // 클라이언트가 헤더를 통해 서버로 전달한 토큰을 추출하는 메소드
     public String resolveToken(String bearerToken) {
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
@@ -92,8 +89,8 @@ public class JwtTokenProvider {
 
         return null;
     }
-    // SecurityContextHolder에 저장할 Authentication 객체를 생성하는 메소드
 
+    // SecurityContextHolder에 저장할 Authentication 객체를 생성하는 메소드
     public Authentication getAuthentication(String token) {
         String username = getUserName(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
@@ -105,16 +102,8 @@ public class JwtTokenProvider {
         );
     }
 
-    private String getUserName(String token) {
-
-        return Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get("username")
-                .toString();
+    public String getUserName(String token) {
+        return getClaims(token).get("username").toString();
     }
 
     // 로그아웃 시 블랙리스트에 Access Token을 저장
@@ -124,20 +113,41 @@ public class JwtTokenProvider {
     }
 
     private String getJti(String token) {
-
-        return Jwts
-                .parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getId();
+        return getClaims(token).getId();
     }
 
     // 블랙리스트 등록 여부 확인
     public boolean isBlacklisted(String token) {
         String key = "blacklist: " + getJti(token);
         return redisTemplate.hasKey(key);
+    }
+
+    // 권한 여부 확인
+    public boolean hasRole(String token) {
+        return getClaims(token).get("role") != null;
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts
+                .parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    // 리플레시 토큰 삭제
+    public void deleteRefreshToken(String accessToken) {
+        String username = getUserName(accessToken);
+
+        redisTemplate.delete("refresh:" + username);
+    }
+
+    public boolean isInvalidRefreshToken(String refreshToken) {
+        String username = getUserName(refreshToken);
+        String storedRefreshToken = redisTemplate.opsForValue().get("refresh:" + username);
+
+        return storedRefreshToken != null && storedRefreshToken.equals(refreshToken);
     }
 }
 

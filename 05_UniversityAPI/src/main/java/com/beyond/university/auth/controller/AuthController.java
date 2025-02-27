@@ -82,4 +82,30 @@ public class AuthController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/refresh")
+    @Operation(summary = "토큰 재발급", description = "RefreshToken으로 AccessToken 재발급")
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "OK",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED",
+                    content = @Content(mediaType = "application/json")
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTERNAL SERVER ERROR",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
+    public ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Authorization") String bearerToken){
+
+        TokenResponseDto tokenResponseDto = authService.refresh(bearerToken);
+
+        return ResponseEntity.ok(tokenResponseDto);
+    }
 }
