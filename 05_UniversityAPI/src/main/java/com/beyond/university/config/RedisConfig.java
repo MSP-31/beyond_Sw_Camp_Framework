@@ -18,23 +18,21 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        // Redis의 연결을 담당하는 RedisConnectionFactory 빈을 생성하는 메소드이다.
+
+        // Redis와 연결을 담당하는 RedisConnectionFactory 빈을 생성
         return new LettuceConnectionFactory(host, port);
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplate(
-            RedisConnectionFactory redisConnectionFactory) {
-
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         // Redis에 데이터를 저장하고 조회, 삭제하는 빈을 생성
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
 
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
         // Redis에서 Key와 Value의 직렬화 방식을 설정한다.
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
 
         return redisTemplate;
     }
-
 }

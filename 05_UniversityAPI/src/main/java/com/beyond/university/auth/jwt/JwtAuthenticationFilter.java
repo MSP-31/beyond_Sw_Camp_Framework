@@ -23,16 +23,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request.getHeader("Authorization"));
 
         // 2. 추출한 토큰의 유효성을 검사 & 블랙리스트 확인 & Access Token 확인
-        if (validateAccessToken(token)) {
-            // 3. Authentication 객체를 생성 후 SecurityContextHolder에 저장
+        if (isUsableAccessToken(token)) {
+            // 3. Authentication 객체를 생성 후 SecurityContext에 저장
             Authentication authentication = jwtTokenProvider.getAuthentication(token);
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+
         filterChain.doFilter(request, response);
     }
 
-    private boolean validateAccessToken(String token) {
+    private boolean isUsableAccessToken(String token) {
         return token != null
                 && jwtTokenProvider.validateToken(token)
                 && !jwtTokenProvider.isBlacklisted(token)

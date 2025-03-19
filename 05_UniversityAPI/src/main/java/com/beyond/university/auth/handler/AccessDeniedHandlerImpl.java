@@ -30,6 +30,5 @@ public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
         response.getWriter().write(
                 mapper.writeValueAsString(errorResponseDto)
         );
-
     }
 }

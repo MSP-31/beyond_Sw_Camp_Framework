@@ -20,7 +20,6 @@ import org.springframework.context.annotation.Configuration;
 public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
-        //
         return new OpenAPI()
                 .components(new Components().addSecuritySchemes(
                         // 보안 스키마의 이름
@@ -32,7 +31,7 @@ public class SwaggerConfig {
                                 .type(SecurityScheme.Type.HTTP)
                                 // .name("Authorization")
                 ))
-                // 보안 적용 대상 지정
+                // 보안 방식 적용
                 .addSecurityItem(
                         new SecurityRequirement().addList("bearer-auth")
                 );

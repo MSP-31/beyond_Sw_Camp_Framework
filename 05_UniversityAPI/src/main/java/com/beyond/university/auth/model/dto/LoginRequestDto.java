@@ -1,7 +1,6 @@
 package com.beyond.university.auth.model.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
@@ -10,7 +9,6 @@ import lombok.ToString;
 @ToString
 @AllArgsConstructor
 public class LoginRequestDto {
-
     @NotBlank
     private final String username;
 

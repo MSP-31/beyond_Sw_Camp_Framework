@@ -5,5 +5,5 @@ logging:
     '[org.springframework.web]': debug
     '[org.mybatis]': debug
     '[org.mariadb.jdbc.client.impl]': debug
-    '[org.springframework.data.redis]' : debug
-    '[io.lettuce.core]' : debug
+    '[org.springframework.data.redis]': debug
+    '[io.lettuce.core]': debug

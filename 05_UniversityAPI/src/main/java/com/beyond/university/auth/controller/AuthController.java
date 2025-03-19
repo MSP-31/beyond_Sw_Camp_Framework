@@ -22,12 +22,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-@Tag(name = "Auth")
+@Tag(name = "Auth APIs", description = "인증 관련 API 목록")
 public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    @Operation(summary = "로그인", description = "AccessToken을 전달받아 로그인 한다.")
+    @Operation(summary = "로그인", description = "아이디와 패스워드를 JSON으로 받아서 로그인한다.")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -46,28 +46,22 @@ public class AuthController {
             )
     })
     public ResponseEntity<TokenResponseDto> login(
-            @Valid @RequestBody LoginRequestDto loginRequestDto){
+            @Valid @RequestBody LoginRequestDto loginRequestDto) {
 
-        TokenResponseDto tokenResponseDto =
-            authService.login(
-                    loginRequestDto.getUsername(),
-                    loginRequestDto.getPassword()
-            );
+        TokenResponseDto tokenResponseDto = authService.login(
+                loginRequestDto.getUsername(),
+                loginRequestDto.getPassword()
+        );
 
         return ResponseEntity.ok(tokenResponseDto);
     }
 
     @PostMapping("/logout")
-    @Operation(summary = "로그아웃", description = "AccessToken을 전달받아 로그아웃한다.")
+    @Operation(summary = "로그아웃", description = "Access Token을 전달받아 로그아웃한다.")
     @ApiResponses({
             @ApiResponse(
-                    responseCode = "200",
-                    description = "OK",
-                    content = @Content(mediaType = "application/json")
-            ),
-            @ApiResponse(
-                    responseCode = "401",
-                    description = "UNAUTHORIZED",
+                    responseCode = "204",
+                    description = "NO CONTENT",
                     content = @Content(mediaType = "application/json")
             ),
             @ApiResponse(
@@ -76,7 +70,7 @@ public class AuthController {
                     content = @Content(mediaType = "application/json")
             )
     })
-    public ResponseEntity<Void> logout(@RequestHeader("Authorization")String bearerToken){
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String bearerToken) {
 
         authService.logout(bearerToken);
 
@@ -84,7 +78,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
-    @Operation(summary = "토큰 재발급", description = "RefreshToken으로 AccessToken 재발급")
+    @Operation(summary = "토큰 재발급", description = "Refresh Token으로 Access Token 재발급")
     @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
@@ -102,7 +96,7 @@ public class AuthController {
                     content = @Content(mediaType = "application/json")
             )
     })
-    public ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Authorization") String bearerToken){
+    public ResponseEntity<TokenResponseDto> refresh(@RequestHeader("Authorization") String bearerToken) {
 
         TokenResponseDto tokenResponseDto = authService.refresh(bearerToken);
 
