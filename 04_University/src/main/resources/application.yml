@@ -6,7 +6,8 @@ spring:
   # datasource? DB? ?? ?? ??? ?? ??.
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/web
+#    url: jdbc:mariadb://localhost:3306/web
+    url: jdbc:mariadb://mariadb:3306/web
     username: beyond
     password: beyond
 mybatis:
