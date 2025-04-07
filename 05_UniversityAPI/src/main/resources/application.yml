@@ -5,7 +5,8 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 #    url: jdbc:mariadb://localhost:3306/web
 #    url: jdbc:mariadb://172.18.0.2:3306/web
-    url: jdbc:mariadb://mariadb:3306/web
+#    url: jdbc:mariadb://mariadb:3306/web
+    url: jdbc:mariadb://mariadb-service:3306/web
     username: beyond
     password: beyond
   # Redis 연결을 위한 설정
@@ -13,7 +14,8 @@ spring:
     redis:
 #      host: localhost
 #      host: 172.18.0.3
-      host: redis
+#      host: redis
+      host: redis-service
       port: 6379
 mybatis:
     type-aliases-package: com.beyond.university.*.model.vo
@@ -29,3 +31,15 @@ springdoc:
 springboot:
   jwt:
     secret: h1o2n3gg5i6l7d8o9n0g;h1o2n3gg5i6l7d8o9n0g
+
+# 애플리케이션의 상태 확인
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true

@@ -70,7 +70,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(requests -> {
                     // Swagger
-                    requests.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/actuator/health").permitAll();
+                    requests.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/actuator/health/**").permitAll();
                     // 로그인, 로그아웃, 토큰 재발급 허용
                     requests.requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/logout", "/api/v1/auth/refresh").permitAll();
                     // 모든 GET 요청의 경우 허용
@@ -95,8 +95,8 @@ public class SecurityConfig {
             CorsConfiguration configuration = new CorsConfiguration();
 
             // CORS 요청에서 허용할 출처를 설정한다.
-            configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://localhost"));
-            // configuration.setAllowedOriginPatterns(List.of("*"));
+            // configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174", "http://localhost"));
+            configuration.setAllowedOriginPatterns(List.of("*"));
             // CORS 요청에서 허용할 HTTP 메소드를 지정한다.
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             // 클라이언트가 요청 시 사용할 수 있는 헤더를 지정한다.
